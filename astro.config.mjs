@@ -8,7 +8,7 @@ import { defineConfig, fontProviders } from 'astro/config';
 
 // https://astro.build/config
 export default defineConfig({
-	site: 'https://rucdev.com',
+	site: 'https://blog.rucdev.com',
 	adapter: cloudflare({
 		// 全ページ静的生成のため、画像はビルド時に sharp で変換して静的ファイルとして出力する
 		imageService: 'compile',

@@ -28,8 +28,7 @@ Cloudflare Workers (Astroをデプロイ)
 
 | ホスト | 役割 | 配信元 |
 |---|---|---|
-| `rucdev.com` | ブログ本体(Astro) | Workers |
-| `www.rucdev.com` | リダイレクト → apex | — |
+| `blog.rucdev.com` | ブログ本体(Astro) | Workers |
 | `games.rucdev.com` | Godot エクスポート配信 | R2 + 前段 Worker(ヘッダ付与) |
 
 ゲームをサブドメインに分離する理由: Godot 4 の Web エクスポートに必要な
@@ -84,7 +83,7 @@ games.rucdev.com (Worker)
 
 COEP は iframe の親ページ側にも制約が波及するため、最初は埋め込まない:
 
-1. `rucdev.com/games/<id>` にゲーム紹介ページ(スクショ、説明、操作方法)
+1. `blog.rucdev.com/games/<id>` にゲーム紹介ページ(スクショ、説明、操作方法)
 2. 「プレイする」ボタンで `games.rucdev.com/<id>/` へ遷移(全画面でプレイ)
 
 iframe 埋め込み(`credentialless` 属性など)はブラウザ対応が揃いきっていないため、
@@ -125,7 +124,7 @@ blog_kit/
    (ビルド時に JSON インデックス生成 + クライアント検索)。
    `client:load` / `client:visible` の違いを体感するのが目的。
 4. **Cloudflare デプロイ**: `@astrojs/cloudflare` + wrangler で Workers へ。
-   `rucdev.com` をカスタムドメインとして紐付け、`www` リダイレクト設定。
+   `blog.rucdev.com` をカスタムドメインとして紐付け。
    GitHub 連携で自動デプロイまで。
 5. **Godot 配信**: R2 バケット作成 → ヘッダ付与 Worker を書いて `games.rucdev.com` に紐付け →
    Godot エクスポートを 1 本アップロードして動作確認 → ブログに紹介ページ追加。
@@ -133,6 +132,6 @@ blog_kit/
 
 ## 決定事項
 
-- ドメインは `rucdev.com` を使用。ゲームは `games.rucdev.com` に分離。
+- ドメインは `rucdev.com` を使用。ブログは `blog.rucdev.com`、ゲームは `games.rucdev.com` にサブドメインで分離(2026-10-13 にブログを apex からサブドメインへ変更)。
 - Godot は最新(4 系)を使用 → COOP/COEP ヘッダ対応は必須ルート。
 - 実装は自分で書く(学習目的)。Claude はレビュー・設計の深掘りで支援。

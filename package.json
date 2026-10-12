@@ -10,7 +10,8 @@
     "build": "astro build",
     "preview": "astro build && wrangler dev",
     "deploy": "astro build && wrangler deploy",
-    "astro": "astro"
+    "astro": "astro",
+    "new": "bun scripts/new-post.ts"
   },
   "dependencies": {
     "@astrojs/cloudflare": "^14.3.1",

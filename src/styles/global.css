@@ -190,15 +190,6 @@ table {
 	margin: 0 0 24px;
 	text-wrap: pretty;
 }
-.prose > p:first-of-type {
-	padding: 16px 18px;
-	background: var(--surface-strong);
-	border-left: 2px solid var(--accent);
-	color: var(--muted);
-	font-size: 13px;
-	line-height: 1.9;
-	border-radius: 0 4px 4px 0;
-}
 .prose ul,
 .prose ol {
 	margin: 0 0 24px;

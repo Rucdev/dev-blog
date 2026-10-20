@@ -1,45 +1,51 @@
 ---
 ---
 
-<button type="button" class="theme-toggle" id="theme-toggle" aria-label="カラーテーマ切り替え">
-	<span class="icon" aria-hidden="true">◐</span>
-	<span class="label">theme</span>
+<button
+  type="button"
+  class="theme-toggle"
+  id="theme-toggle"
+  aria-label="カラーテーマ切り替え"
+>
+  <span class="icon" aria-hidden="true">◐</span>
+  <span class="label">theme</span>
 </button>
 
 <style>
-	.theme-toggle {
-		display: flex;
-		align-items: center;
-		gap: 6px;
-		padding: 0;
-		background: none;
-		border: none;
-		cursor: pointer;
-		font: 500 12.5px var(--font-mono);
-		color: var(--header-fg-muted);
-	}
-	.theme-toggle:hover {
-		color: var(--accent);
-	}
-	.icon {
-		font-size: 13px;
-		color: var(--accent);
-	}
+.theme-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font: 500 12.5px var(--font-mono);
+  color: var(--header-fg-muted);
+}
+.theme-toggle:hover {
+  color: var(--accent);
+}
+.icon {
+  font-size: 13px;
+  color: var(--accent);
+}
 </style>
 
 <script is:inline>
-	(() => {
-		const button = document.getElementById('theme-toggle');
-		if (!button) return;
-		button.addEventListener('click', () => {
-			const current = document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light';
-			const next = current === 'dark' ? 'light' : 'dark';
-			document.documentElement.dataset.theme = next;
-			try {
-				localStorage.setItem('theme', next);
-			} catch {
-				/* ignore */
-			}
-		});
-	})();
+(() => {
+  const button = document.getElementById("theme-toggle");
+  if (!button) return;
+  button.addEventListener("click", () => {
+    const current =
+      document.documentElement.dataset.theme === "dark" ? "dark" : "light";
+    const next = current === "dark" ? "light" : "dark";
+    document.documentElement.dataset.theme = next;
+    try {
+      localStorage.setItem("theme", next);
+    } catch {
+      /* ignore */
+    }
+  });
+})();
 </script>

@@ -7,18 +7,18 @@
   },
   "scripts": {
     "dev": "astro dev",
-    "build": "cf build",
-    "deploy": "cf deploy",
+    "build": "astro build",
+    "preview": "astro build && wrangler dev",
+    "deploy": "astro build && wrangler deploy",
     "astro": "astro",
     "new": "bun scripts/new-post.ts"
   },
   "dependencies": {
-    "@astrojs/cloudflare": "15.0.0-beta.1",
     "@astrojs/mdx": "^7.0.8",
     "@astrojs/rss": "^4.0.19",
     "@astrojs/sitemap": "^3.7.4",
     "@astrojs/svelte": "^9.0.1",
-    "astro": "7.4.0-beta.1",
+    "astro": "^7.4.0",
     "sharp": "^0.35.4",
     "svelte": "^5.57.0"
   },
@@ -27,8 +27,8 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
-    "@cloudflare/vite-plugin": "2.0.0-beta.sha-52b0dc0e9",
-    "cf": "1.0.0-beta.14",
-    "typescript": "^5.9.3"
+    "@biomejs/biome": "2.5.15",
+    "typescript": "^5.9.3",
+    "wrangler": "^4.151.1"
   }
 }

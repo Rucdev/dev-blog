@@ -1,0 +1,14 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "rucdev-blog",
+  "compatibility_date": "2026-10-17",
+  // 全ページ静的生成のため Worker 本体は持たず、dist をアセットとして配信する
+  "assets": {
+    "directory": "./dist"
+  },
+  // deploy のたびにカスタムドメインとして紐付ける(DNS レコードも自動作成)
+  "routes": [{ "pattern": "blog.rucdev.com", "custom_domain": true }],
+  "observability": {
+    "enabled": true
+  }
+}

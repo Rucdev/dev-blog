@@ -92,7 +92,7 @@ iframe 埋め込み(`credentialless` 属性など)はブラウザ対応が揃い
 ## リポジトリ構成の目安
 
 ```
-blog_kit/
+dev-blog/
 ├── src/
 │   ├── content/
 │   │   └── blog/           # フェーズ1のMarkdown置き場

@@ -1,199 +1,207 @@
 ---
-import { getCollection } from 'astro:content';
-import Layout from '../layouts/Layout.astro';
-import { SITE_TITLE } from '../consts';
+import { getCollection } from "astro:content";
+import { SITE_TITLE } from "../consts";
+import Layout from "../layouts/Layout.astro";
 
-const posts = (await getCollection('blog')).sort(
-	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+const posts = (await getCollection("blog")).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
 );
 
 type Post = (typeof posts)[number];
 
 const byYear = new Map<number, Post[]>();
 for (const post of posts) {
-	const year = post.data.pubDate.getFullYear();
-	if (!byYear.has(year)) byYear.set(year, []);
-	byYear.get(year)!.push(post);
+  const year = post.data.pubDate.getFullYear();
+  if (!byYear.has(year)) byYear.set(year, []);
+  byYear.get(year)!.push(post);
 }
 const years = [...byYear.keys()].sort((a, b) => b - a);
 
 function monthCounts(yearPosts: Post[]) {
-	const counts = new Array(12).fill(0);
-	for (const post of yearPosts) counts[post.data.pubDate.getMonth()] += 1;
-	return counts;
+  const counts = new Array(12).fill(0);
+  for (const post of yearPosts) counts[post.data.pubDate.getMonth()] += 1;
+  return counts;
 }
 
 function heatClass(count: number, max: number) {
-	if (count === 0 || max === 0) return 'heat-0';
-	const ratio = count / max;
-	if (ratio >= 0.67) return 'heat-3';
-	if (ratio >= 0.34) return 'heat-2';
-	return 'heat-1';
+  if (count === 0 || max === 0) return "heat-0";
+  const ratio = count / max;
+  if (ratio >= 0.67) return "heat-3";
+  if (ratio >= 0.34) return "heat-2";
+  return "heat-1";
 }
 
 const byYearMonth = years.map((year) => {
-	const yearPosts = byYear.get(year)!;
-	const counts = monthCounts(yearPosts);
-	const max = Math.max(...counts);
-	const groups = new Map<number, Post[]>();
-	for (const post of yearPosts) {
-		const month = post.data.pubDate.getMonth();
-		if (!groups.has(month)) groups.set(month, []);
-		groups.get(month)!.push(post);
-	}
-	const months = [...groups.keys()]
-		.sort((a, b) => b - a)
-		.map((month) => ({ month, posts: groups.get(month)! }));
-	return { year, counts, max, total: yearPosts.length, months };
+  const yearPosts = byYear.get(year)!;
+  const counts = monthCounts(yearPosts);
+  const max = Math.max(...counts);
+  const groups = new Map<number, Post[]>();
+  for (const post of yearPosts) {
+    const month = post.data.pubDate.getMonth();
+    if (!groups.has(month)) groups.set(month, []);
+    groups.get(month)!.push(post);
+  }
+  const months = [...groups.keys()]
+    .sort((a, b) => b - a)
+    .map((month) => ({ month, posts: groups.get(month)! }));
+  return { year, counts, max, total: yearPosts.length, months };
 });
 ---
 
-<Layout title={`アーカイブ | ${SITE_TITLE}`} description={`全 ${posts.length} 本の記事一覧`}>
-	<div class="archive">
-		<div class="head">
-			<a href="/">← {SITE_TITLE}</a><span>{posts.length} posts / {years.at(-1) ?? '-'}–{years[0] ?? '-'}</span>
-		</div>
-		<h1>アーカイブ</h1>
+<Layout
+  title={`アーカイブ | ${SITE_TITLE}`}
+  description={`全 ${posts.length} 本の記事一覧`}
+>
+  <div class="archive">
+    <div class="head">
+      <a href="/">← {SITE_TITLE}</a
+      ><span
+        >{posts.length}
+        posts / {years.at(-1) ?? "-"}–{years[0] ?? "-"}</span
+      >
+    </div>
+    <h1>アーカイブ</h1>
 
-		<div class="heatmap">
-			{
-				byYearMonth.map(({ year, counts, max, total }) => (
-					<div class="heat-row">
-						<span class="heat-year">{year}</span>
-						<div class="heat-bars">
-							{counts.map((count) => (
-								<span class={`heat-cell ${heatClass(count, max)}`} title={`${count} posts`} />
-							))}
-						</div>
-						<span class="heat-total">{total}</span>
-					</div>
-				))
-			}
-		</div>
+    <div class="heatmap">
+      {byYearMonth.map(({ year, counts, max, total }) => (
+        <div class="heat-row">
+          <span class="heat-year">{year}</span>
+          <div class="heat-bars">
+            {counts.map((count) => (
+              <span
+                class={`heat-cell ${heatClass(count, max)}`}
+                title={`${count} posts`}
+              />
+            ))}
+          </div>
+          <span class="heat-total">{total}</span>
+        </div>
+      ))}
+    </div>
 
-		<div class="month-groups">
-			{
-				byYearMonth.map(({ year, months }) =>
-					months.map(({ month, posts: monthPosts }) => (
-						<div class="month-group">
-							<p class="month-label">
-								{year} / {String(month + 1).padStart(2, '0')}
-							</p>
-							{monthPosts.map((post) => (
-								<a class="month-post" href={`/blog/${post.id}/`}>
-									<span class="day">{String(post.data.pubDate.getDate()).padStart(2, '0')}</span>
-									{post.data.title}
-								</a>
-							))}
-						</div>
-					)),
-				)
-			}
-			{posts.length === 0 && <p class="empty">まだ記事がありません。</p>}
-		</div>
-	</div>
+    <div class="month-groups">
+      {byYearMonth.map(({ year, months }) =>
+        months.map(({ month, posts: monthPosts }) => (
+          <div class="month-group">
+            <p class="month-label">
+              {year} / {String(month + 1).padStart(2, "0")}
+            </p>
+            {monthPosts.map((post) => (
+              <a class="month-post" href={`/blog/${post.id}/`}>
+                <span class="day">
+                  {String(post.data.pubDate.getDate()).padStart(2, "0")}
+                </span>
+                {post.data.title}
+              </a>
+            ))}
+          </div>
+        )),
+      )}
+      {posts.length === 0 && <p class="empty">まだ記事がありません。</p>}
+    </div>
+  </div>
 </Layout>
 
 <style>
-	.archive {
-		max-width: 1120px;
-		margin: 0 auto;
-		padding: 40px 28px 56px;
-	}
-	.head {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		margin-bottom: 24px;
-		font: 400 12px var(--font-mono);
-		color: var(--faint);
-	}
-	.head a {
-		color: var(--ink);
-	}
-	h1 {
-		font: 700 22px var(--font-sans);
-		margin: 0 0 24px;
-	}
-	.heatmap {
-		display: flex;
-		flex-direction: column;
-		gap: 10px;
-		margin-bottom: 38px;
-	}
-	.heat-row {
-		display: grid;
-		grid-template-columns: 52px 1fr 44px;
-		gap: 14px;
-		align-items: center;
-	}
-	.heat-year {
-		font: 500 12px var(--font-mono);
-		color: var(--ink);
-	}
-	.heat-bars {
-		display: flex;
-		gap: 4px;
-	}
-	.heat-cell {
-		flex: 1;
-		height: 22px;
-		border-radius: 2px;
-	}
-	.heat-0 {
-		background: var(--accent-empty);
-	}
-	.heat-1 {
-		background: var(--accent-low);
-	}
-	.heat-2 {
-		background: var(--accent-mid);
-	}
-	.heat-3 {
-		background: var(--accent);
-	}
-	.heat-total {
-		font: 400 11.5px var(--font-mono);
-		color: var(--faint);
-		text-align: right;
-	}
-	.month-groups {
-		columns: 2;
-		column-gap: 48px;
-	}
-	.month-group {
-		break-inside: avoid;
-		margin-bottom: 22px;
-	}
-	.month-label {
-		margin: 0 0 10px;
-		padding-bottom: 8px;
-		font: 500 11px var(--font-mono);
-		color: var(--faint);
-		letter-spacing: 0.1em;
-		border-bottom: 1px solid var(--border-strong);
-	}
-	.month-post {
-		display: flex;
-		gap: 14px;
-		padding: 8px 0;
-		font: 400 13px var(--font-sans);
-		color: var(--ink);
-	}
-	.month-post:hover {
-		color: var(--accent);
-	}
-	.day {
-		font: 400 11.5px var(--font-mono);
-		color: var(--faint);
-	}
-	.empty {
-		font: 400 13px var(--font-sans);
-		color: var(--muted);
-	}
-	@media (max-width: 640px) {
-		.month-groups {
-			columns: 1;
-		}
-	}
+.archive {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 40px 28px 56px;
+}
+.head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  font: 400 12px var(--font-mono);
+  color: var(--faint);
+}
+.head a {
+  color: var(--ink);
+}
+h1 {
+  font: 700 22px var(--font-sans);
+  margin: 0 0 24px;
+}
+.heatmap {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 38px;
+}
+.heat-row {
+  display: grid;
+  grid-template-columns: 52px 1fr 44px;
+  gap: 14px;
+  align-items: center;
+}
+.heat-year {
+  font: 500 12px var(--font-mono);
+  color: var(--ink);
+}
+.heat-bars {
+  display: flex;
+  gap: 4px;
+}
+.heat-cell {
+  flex: 1;
+  height: 22px;
+  border-radius: 2px;
+}
+.heat-0 {
+  background: var(--accent-empty);
+}
+.heat-1 {
+  background: var(--accent-low);
+}
+.heat-2 {
+  background: var(--accent-mid);
+}
+.heat-3 {
+  background: var(--accent);
+}
+.heat-total {
+  font: 400 11.5px var(--font-mono);
+  color: var(--faint);
+  text-align: right;
+}
+.month-groups {
+  columns: 2;
+  column-gap: 48px;
+}
+.month-group {
+  break-inside: avoid;
+  margin-bottom: 22px;
+}
+.month-label {
+  margin: 0 0 10px;
+  padding-bottom: 8px;
+  font: 500 11px var(--font-mono);
+  color: var(--faint);
+  letter-spacing: 0.1em;
+  border-bottom: 1px solid var(--border-strong);
+}
+.month-post {
+  display: flex;
+  gap: 14px;
+  padding: 8px 0;
+  font: 400 13px var(--font-sans);
+  color: var(--ink);
+}
+.month-post:hover {
+  color: var(--accent);
+}
+.day {
+  font: 400 11.5px var(--font-mono);
+  color: var(--faint);
+}
+.empty {
+  font: 400 13px var(--font-sans);
+  color: var(--muted);
+}
+@media (max-width: 640px) {
+  .month-groups {
+    columns: 1;
+  }
+}
 </style>

@@ -1,25 +1,28 @@
 ---
-import { getCollection } from 'astro:content';
-import SearchPalette from '../components/search/SearchPalette.svelte';
-import type { SearchPost } from '../components/search/search';
-import Layout from '../layouts/Layout.astro';
-import { SITE_TITLE } from '../consts';
-import { estimateReadingTime } from '../utils/readingTime';
+import { getCollection } from "astro:content";
+import SearchPalette from "../components/search/SearchPalette.svelte";
+import type { SearchPost } from "../components/search/search";
+import { SITE_TITLE } from "../consts";
+import Layout from "../layouts/Layout.astro";
+import { estimateReadingTime } from "../utils/readingTime";
 
-const posts = (await getCollection('blog')).sort(
-	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+const posts = (await getCollection("blog")).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
 );
 
 const index: SearchPost[] = posts.map((post) => ({
-	slug: post.id,
-	title: post.data.title,
-	excerpt: post.data.description,
-	tags: post.data.tags,
-	dateDisplay: post.data.pubDate.toISOString().slice(0, 10),
-	readingTime: estimateReadingTime(post.body ?? ''),
+  slug: post.id,
+  title: post.data.title,
+  excerpt: post.data.description,
+  tags: post.data.tags,
+  dateDisplay: post.data.pubDate.toISOString().slice(0, 10),
+  readingTime: estimateReadingTime(post.body ?? ""),
 }));
 ---
 
-<Layout title={`検索 | ${SITE_TITLE}`} description="記事をタイトル・タグ・本文で検索">
-	<SearchPalette posts={index} client:load />
+<Layout
+  title={`検索 | ${SITE_TITLE}`}
+  description="記事をタイトル・タグ・本文で検索"
+>
+  <SearchPalette posts={index} client:load />
 </Layout>

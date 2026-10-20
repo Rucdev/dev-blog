@@ -3,38 +3,43 @@ const year = new Date().getFullYear();
 ---
 
 <footer class="site-footer">
-	<div class="bar">
-		<span>&copy; {year} rucdev</span>
-		<nav>
-			<a href="/rss.xml">RSS</a>
-			<a href="https://github.com/rucdev" target="_blank" rel="noopener noreferrer">GitHub</a>
-			<a href="https://x.com/" target="_blank" rel="noopener noreferrer">X</a>
-		</nav>
-	</div>
+  <div class="bar">
+    <span>&copy; {year} rucdev</span>
+    <nav>
+      <a href="/rss.xml">RSS</a>
+      <a
+        href="https://github.com/rucdev"
+        target="_blank"
+        rel="noopener noreferrer"
+        >GitHub</a
+      >
+      <a href="https://x.com/" target="_blank" rel="noopener noreferrer">X</a>
+    </nav>
+  </div>
 </footer>
 
 <style>
-	.site-footer {
-		border-top: 1px solid var(--border);
-	}
-	.bar {
-		max-width: 1120px;
-		margin: 0 auto;
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		padding: 20px 28px;
-		font: 400 11px var(--font-mono);
-		color: var(--faint);
-	}
-	nav {
-		display: flex;
-		gap: 16px;
-	}
-	nav a {
-		color: var(--faint);
-	}
-	nav a:hover {
-		color: var(--accent);
-	}
+.site-footer {
+  border-top: 1px solid var(--border);
+}
+.bar {
+  max-width: 1120px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 28px;
+  font: 400 11px var(--font-mono);
+  color: var(--faint);
+}
+nav {
+  display: flex;
+  gap: 16px;
+}
+nav a {
+  color: var(--faint);
+}
+nav a:hover {
+  color: var(--accent);
+}
 </style>

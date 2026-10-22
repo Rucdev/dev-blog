@@ -1,0 +1,20 @@
+---
+import { type CollectionEntry, getCollection, render } from "astro:content";
+import CanvasGame from "../../layouts/CanvasGame.astro";
+
+export async function getStaticPaths() {
+  const games = await getCollection("canvasGames");
+  return games.map((game) => ({ params: { slug: game.id }, props: { game } }));
+}
+
+interface Props {
+  game: CollectionEntry<"canvasGames">;
+}
+
+const { game } = Astro.props;
+const { Content } = await render(game);
+---
+
+<CanvasGame {...game.data}>
+  <Content />
+</CanvasGame>

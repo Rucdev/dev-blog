@@ -1,0 +1,125 @@
+---
+import { Image } from "astro:assets";
+import { getCollection } from "astro:content";
+import FormattedDate from "../../components/FormattedDate.astro";
+import { SITE_TITLE } from "../../consts";
+import Layout from "../../layouts/Layout.astro";
+
+const games = (await getCollection("canvasGames")).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+);
+---
+
+<Layout
+  title={`CanvasGames | ${SITE_TITLE}`}
+  description="Canvas API で作った小さなゲーム置き場"
+>
+  <div class="games">
+    <div class="head">
+      <a href="/">← {SITE_TITLE}</a><span>{games.length} games</span>
+    </div>
+    <h1>CanvasGames</h1>
+    <p class="lead">Canvas API で作った小さなゲーム置き場。</p>
+
+    {games.length === 0 ? (
+      <p class="empty">準備中</p>
+    ) : (
+      <ul class="grid">
+        {games.map((game) => (
+          <li>
+            <a class="card" href={`/canvas-games/${game.id}/`}>
+              <Image
+                src={game.data.thumbnail}
+                alt=""
+                width={600}
+                height={315}
+                fit="cover"
+                class="thumb"
+              />
+              <span class="card-title">{game.data.title}</span>
+              <span class="card-desc">{game.data.description}</span>
+              <span class="card-date">
+                <FormattedDate date={game.data.pubDate} />
+              </span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    )}
+  </div>
+</Layout>
+
+<style>
+.games {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 40px 28px 56px;
+}
+.head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  font: 400 12px var(--font-mono);
+  color: var(--faint);
+}
+.head a {
+  color: var(--ink);
+}
+h1 {
+  font: 700 22px var(--font-sans);
+  margin: 0 0 8px;
+}
+.lead {
+  margin: 0 0 28px;
+  font: 400 13px var(--font-sans);
+  color: var(--muted);
+}
+.empty {
+  font: 400 13px var(--font-mono);
+  color: var(--muted);
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 28px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  color: var(--ink);
+  text-decoration: none;
+}
+.card:hover {
+  text-decoration: none;
+}
+.thumb {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1200 / 630;
+  object-fit: cover;
+  margin-bottom: 6px;
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+}
+.card-title {
+  font: 500 15px / 1.6 var(--font-sans);
+}
+.card:hover .card-title {
+  color: var(--accent);
+}
+.card-desc {
+  font: 400 13px / 1.7 var(--font-sans);
+  color: var(--muted);
+}
+.card-date {
+  font: 400 11px var(--font-mono);
+  color: var(--faint);
+}
+</style>

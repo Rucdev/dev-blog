@@ -1,0 +1,73 @@
+---
+import { getImage } from "astro:assets";
+import type { CollectionEntry } from "astro:content";
+import FormattedDate from "../components/FormattedDate.astro";
+import Layout from "./Layout.astro";
+
+type Props = CollectionEntry<"canvasGames">["data"];
+
+const { title, description, pubDate, updatedDate, thumbnail } = Astro.props;
+
+// BaseHead は og:image を 1200x630 として宣言しているので、サムネイルをその比率に切り抜く
+const ogImage = await getImage({
+  src: thumbnail,
+  width: 1200,
+  height: 630,
+  fit: "cover",
+  format: "png",
+});
+---
+
+<Layout title={title} description={description} image={ogImage.src}>
+  <article class="game">
+    <div class="meta">
+      <FormattedDate date={pubDate} />
+      <a href="/canvas-games/">← CanvasGames</a>
+    </div>
+    <h1 class="title">{title}</h1>
+    {updatedDate && (
+      <p class="updated">
+        Last updated on <FormattedDate date={updatedDate} />
+      </p>
+    )}
+    <p class="lead">{description}</p>
+    <div class="prose">
+      <slot />
+    </div>
+  </article>
+</Layout>
+
+<style>
+.game {
+  max-width: 776px;
+  margin: 0 auto;
+  padding: 40px 28px 56px;
+}
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 0 0 14px;
+  font: 400 11.5px var(--font-mono);
+  color: var(--faint);
+}
+.meta a {
+  color: var(--accent);
+}
+.title {
+  font: 700 30px / 1.55 var(--font-sans);
+  letter-spacing: -0.015em;
+  margin: 0 0 18px;
+}
+.updated {
+  margin: -8px 0 18px;
+  font: 400 12px var(--font-sans);
+  font-style: italic;
+  color: var(--faint);
+}
+.lead {
+  margin: 0 0 28px;
+  font: 400 14px / 1.8 var(--font-sans);
+  color: var(--muted);
+}
+</style>

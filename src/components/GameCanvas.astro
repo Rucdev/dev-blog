@@ -1,0 +1,108 @@
+---
+/**
+ * canvas ゲームの枠。canvas を置いて、画面に入ったら
+ * src/content/canvas-games/<game>/game.ts の default export(mount)を呼ぶだけ。
+ * 高 DPI 対応・getContext・ループ・入力はすべてゲーム側の責務
+ * (枠が getContext を呼ぶと、ゲームが WebGL を選べなくなるため)。
+ */
+interface Props {
+  /** src/content/canvas-games/ 以下のディレクトリ名 */
+  game: string;
+  /** 論理サイズ。canvas の width/height 属性と表示上の最大幅・比率になる */
+  width: number;
+  height: number;
+  label: string;
+}
+
+const { game, width, height, label } = Astro.props;
+---
+
+<div class="game-canvas" style={`max-width: ${width}px`}>
+  <canvas
+    data-game={game}
+    width={width}
+    height={height}
+    tabindex="0"
+    aria-label={label}
+    style={`aspect-ratio: ${width} / ${height}`}
+  ></canvas>
+</div>
+
+<script>
+type Mount = (canvas: HTMLCanvasElement) => () => void;
+
+// ゲームごとに別チャンクになり、使うものだけ読み込まれる
+const games = import.meta.glob<{ default: Mount }>(
+  "../content/canvas-games/*/game.ts",
+);
+
+function showError(canvas: HTMLCanvasElement, error: unknown) {
+  console.error(`[GameCanvas] ${canvas.dataset.game}:`, error);
+  const message = document.createElement("p");
+  message.className = "game-error";
+  message.textContent = "ゲームの読み込みに失敗しました";
+  canvas.after(message);
+}
+
+async function start(canvas: HTMLCanvasElement) {
+  const load = games[`../content/canvas-games/${canvas.dataset.game}/game.ts`];
+  try {
+    if (!load) throw new Error("game.ts が見つかりません");
+    const { default: mount } = await load();
+    // ページ遷移のたびにアンマウントする仕組み(ClientRouter)は使っていないので、
+    // 戻り値の cleanup はページを離れるときに呼ぶだけでよい
+    const cleanup = mount(canvas);
+    window.addEventListener("pagehide", cleanup, { once: true });
+  } catch (error) {
+    showError(canvas, error);
+  }
+}
+
+// 画面に入ってから読み込む(解説が長くても、スクロールするまでゲームの JS は取りに行かない)
+const observer = new IntersectionObserver((entries) => {
+  for (const entry of entries) {
+    if (!entry.isIntersecting) continue;
+    observer.unobserve(entry.target);
+    start(entry.target as HTMLCanvasElement);
+  }
+});
+for (const canvas of document.querySelectorAll<HTMLCanvasElement>(
+  "canvas[data-game]",
+)) {
+  observer.observe(canvas);
+}
+</script>
+
+<style>
+.game-canvas {
+  position: relative;
+  margin: 1.5rem 0;
+}
+
+canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  touch-action: none;
+}
+
+canvas:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* showError で動的に足すので :global が要る */
+.game-canvas :global(.game-error) {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  font: 400 12.5px var(--font-mono);
+  color: var(--muted);
+}
+</style>

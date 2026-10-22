@@ -2,7 +2,7 @@
 title: "Juniper vLabsでAnsibleを使う　BGP - Multi - AS編"
 description: "Juniper vLabsのBGP - Multi - AS構成に対して、手元のAnsibleから設定投入にチャレンジする"
 pubDate: 2022-12-20T12:18:02+09:00
-tags: []
+tags: ["Juniper", "Ansible"]
 heroImage: ./images/20221220002400.png
 ---
 

@@ -2,7 +2,7 @@
 title: "gemini-cliとtmuxを使った最先端のコーディングを体験する"
 description: "無料枠の大きいgemini-cliとtmuxを組み合わせて、複数エージェントによる並列コーディングを体験する"
 pubDate: 2025-07-21T08:30:00+09:00
-tags: []
+tags: ["Gemini", "LLM"]
 heroImage: ./images/20250702012012.png
 ---
 

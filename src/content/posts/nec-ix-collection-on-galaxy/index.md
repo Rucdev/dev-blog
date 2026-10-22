@@ -2,7 +2,7 @@
 title: "【Ansible】NEC IX向けのコレクションをAnsible Galaxyにアップしました。"
 description: "NEC IX向けAnsibleコレクションをAnsible Galaxyに公開した報告と、現時点で抱えている課題のまとめ"
 pubDate: 2023-02-19T01:11:38+09:00
-tags: ["Ansible"]
+tags: ["Ansible", "NEC IX"]
 ---
 
 ### Ansible Galaxyへコレクションをアップする。

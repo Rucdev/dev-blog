@@ -2,7 +2,7 @@
 title: "Terraformでサーバレスアプリケーション構築の挑戦"
 description: "AWS公式チュートリアルのLambda + API Gateway + DynamoDBによるCRUD APIをTerraformで構築してみる"
 pubDate: 2024-10-10T22:43:17+09:00
-tags: ["Terraform"]
+tags: ["Terraform", "AWS"]
 heroImage: ./images/20240317001240.png
 ---
 

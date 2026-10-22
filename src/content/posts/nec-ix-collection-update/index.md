@@ -2,7 +2,7 @@
 title: "Ansible NEC IXコレクションを2年越しにアップデートしました。"
 description: "NEC IX向けAnsibleコレクションにOSPFとStatic RouteのNetwork Resource Moduleを追加した、2年8か月ぶりのアップデート"
 pubDate: 2025-10-05T23:53:20+09:00
-tags: ["Ansible"]
+tags: ["Ansible", "NEC IX"]
 ---
 
 ## NEC IXルーター向けコレクションにOSPFとStatic RouteのNetwork Resource Moduleを追加しました！

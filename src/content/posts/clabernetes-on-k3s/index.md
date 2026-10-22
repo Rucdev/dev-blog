@@ -2,7 +2,7 @@
 title: "【格闘】ClabernetesをK3sで作ってみよう"
 description: "Proxmox上のVM3台で組んだK3sクラスターにClabernetesを構築し、マルチノードのContainerlabを動かすまでのハマりどころ"
 pubDate: 2026-04-13T00:28:19+09:00
-tags: []
+tags: ["kubernetes", "k3s", "Proxmox", "c9s", "Containerlab"]
 heroImage: ./images/20260405224201.png
 ---
 

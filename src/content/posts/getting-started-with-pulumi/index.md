@@ -2,7 +2,7 @@
 title: "Pulumiに入門する"
 description: "Terraformのライセンス変更をきっかけに知ったPulumiに、公式の手順を参考に入門する"
 pubDate: 2023-08-24T22:21:51+09:00
-tags: []
+tags: ["Pulumi", "AWS"]
 heroImage: ./images/20230824211210.png
 ---
 

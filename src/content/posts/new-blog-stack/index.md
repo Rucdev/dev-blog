@@ -2,7 +2,7 @@
 title: "ブログをCloudflareに移植！"
 description: "個人ブログを自分でいい感じに移植するよ！"
 pubDate: 2026-10-12T00:37:27+09:00
-tags: []
+tags: ["Cloudflare", "Astro", "Svelte"]
 ---
 
 ## Cloudflareがアツイ！

@@ -2,7 +2,7 @@
 title: "NEC IX対応のAnsible Collectionを作ってみた"
 description: "AnsibleのCollection作ってみた"
 pubDate: 2022-12-09T09:00:00+09:00
-tags: ["Ansible"]
+tags: ["Ansible", "NEC IX"]
 ---
 
 ## Ansible Collection

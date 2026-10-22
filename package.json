@@ -14,11 +14,15 @@
     "new": "bun scripts/new-post.ts"
   },
   "dependencies": {
+    "@astrojs/markdown-remark": "^7.2.4",
     "@astrojs/mdx": "^7.0.8",
     "@astrojs/rss": "^4.0.19",
     "@astrojs/sitemap": "^3.7.4",
     "@astrojs/svelte": "^9.0.1",
     "astro": "^7.4.0",
+    "astro-expressive-code": "^0.44.3",
+    "rehype-autolink-headings": "^7.1.0",
+    "satori": "^0.63.2",
     "sharp": "^0.35.4",
     "svelte": "^5.57.0"
   },
@@ -28,6 +32,7 @@
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
     "@biomejs/biome": "2.5.15",
+    "pagefind": "^1.5.2",
     "typescript": "^5.9.3",
     "wrangler": "^4.151.1"
   }

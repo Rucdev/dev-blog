@@ -1,15 +1,22 @@
 <script lang="ts">
-import { postHref, type SearchPost, splitHighlight } from "./search";
+import {
+  type HighlightChunk,
+  postHref,
+  type SearchPost,
+  splitHighlight,
+} from "./search";
 
 interface Props {
   id: string;
   post: SearchPost;
   query: string;
+  /** 本文検索でヒットしたときの抜粋 */
+  bodyExcerpt?: HighlightChunk[];
   selected: boolean;
   onhover: () => void;
 }
 
-let { id, post, query, selected, onhover }: Props = $props();
+let { id, post, query, bodyExcerpt, selected, onhover }: Props = $props();
 
 // selected になったら一覧のスクロール位置を追従させる
 function scrollWhenSelected(node: HTMLElement) {
@@ -17,16 +24,22 @@ function scrollWhenSelected(node: HTMLElement) {
 }
 </script>
 
-{#snippet highlighted(
-  text: string,
+{#snippet chunks(
+  list: HighlightChunk[],
 )}
-  {#each splitHighlight(text, query) as chunk}
+  {#each list as chunk}
     {#if chunk.mark}
       <mark>{chunk.text}</mark>
     {:else}
       {chunk.text}
     {/if}
   {/each}
+{/snippet}
+
+{#snippet highlighted(
+  text: string,
+)}
+  {@render chunks(splitHighlight(text, query))}
 {/snippet}
 
 <a
@@ -48,6 +61,9 @@ function scrollWhenSelected(node: HTMLElement) {
   </div>
   <p class="result-title">{@render highlighted(post.title)}</p>
   <p class="result-excerpt">{@render highlighted(post.excerpt)}</p>
+  {#if bodyExcerpt}
+    <p class="result-body">…{@render chunks(bodyExcerpt)}…</p>
+  {/if}
 </a>
 
 <style>
@@ -79,6 +95,13 @@ function scrollWhenSelected(node: HTMLElement) {
   margin: 0;
   font: 400 12px / 1.8 var(--font-sans);
   color: var(--muted);
+}
+.result-body {
+  margin: 6px 0 0;
+  padding-left: 10px;
+  border-left: 2px solid var(--border-strong);
+  font: 400 11.5px / 1.8 var(--font-sans);
+  color: var(--faint);
 }
 mark {
   background: var(--mark-bg);

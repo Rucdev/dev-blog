@@ -207,27 +207,16 @@ table {
   border-left: 2px solid var(--accent);
   color: var(--muted);
 }
-.prose code {
+.prose :not(pre) > code {
   padding: 1px 5px;
   background: var(--inline-code-bg);
   border-radius: 3px;
   font-size: 12.5px;
   color: var(--accent-hover);
 }
-.prose pre {
+/* コードブロックの見た目は astro-expressive-code(astro.config.mjs)で設定 */
+.prose .expressive-code {
   margin: 0 0 24px;
-  padding: 16px 14px;
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  font-size: 12.5px;
-  line-height: 1.85;
-  overflow-x: auto;
-}
-.prose pre code {
-  padding: 0;
-  background: none;
-  color: inherit;
-  font-size: inherit;
 }
 .prose a {
   text-decoration: underline;

@@ -23,22 +23,33 @@ export function countTags(posts: SearchPost[]): [string, number][] {
   return [...counts.entries()].sort((a, b) => b[1] - a[1]);
 }
 
-/** タグ(null は全件)で絞り込んだうえで、タイトル・抜粋・タグに query を含む記事を返す */
+/**
+ * タグ(null は全件)で絞り込んだうえで、タイトル・抜粋・タグに query を含む記事を返す。
+ * bodyHits(本文検索でヒットした slug。関連度順)にしか含まれない記事は、その後ろに並べる。
+ */
 export function filterPosts(
   posts: SearchPost[],
   query: string,
   tag: string | null,
+  bodyHits: ReadonlyMap<string, unknown> = new Map(),
 ): SearchPost[] {
   const q = query.trim().toLowerCase();
-  return posts.filter((post) => {
-    if (tag !== null && !post.tags.includes(tag)) return false;
-    if (!q) return true;
-    return (
+  const inTag =
+    tag === null ? posts : posts.filter((post) => post.tags.includes(tag));
+  if (!q) return inTag;
+
+  const metaMatches = inTag.filter(
+    (post) =>
       post.title.toLowerCase().includes(q) ||
       post.excerpt.toLowerCase().includes(q) ||
-      post.tags.some((t) => t.toLowerCase().includes(q))
-    );
-  });
+      post.tags.some((t) => t.toLowerCase().includes(q)),
+  );
+  const matched = new Set(metaMatches.map((post) => post.slug));
+  const bySlug = new Map(inTag.map((post) => [post.slug, post]));
+  const bodyOnly = [...bodyHits.keys()]
+    .filter((slug) => !matched.has(slug))
+    .flatMap((slug) => bySlug.get(slug) ?? []);
+  return [...metaMatches, ...bodyOnly];
 }
 
 /** text 中で最初に query に一致した箇所を mark: true として分割する */

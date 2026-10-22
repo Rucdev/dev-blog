@@ -1,10 +1,13 @@
-// 新しい記事の雛形を src/content/blog/<slug>/index.md に作成する
+// 新しい記事の雛形を src/content/posts/<slug>/index.md に作成する
 // 使い方: bun run new <slug>
 import { existsSync } from "node:fs";
 import { mkdir, writeFile } from "node:fs/promises";
 import { join } from "node:path";
+import { fileURLToPath } from "node:url";
 
-const BLOG_DIR = join(import.meta.dir, "..", "src", "content", "blog");
+const POSTS_DIR = fileURLToPath(
+  new URL("../src/content/posts", import.meta.url),
+);
 
 const slug = process.argv[2];
 
@@ -18,7 +21,7 @@ if (!/^[a-z0-9]+(-[a-z0-9]+)*$/.test(slug)) {
   process.exit(1);
 }
 
-const postDir = join(BLOG_DIR, slug);
+const postDir = join(POSTS_DIR, slug);
 
 if (existsSync(postDir)) {
   console.error(`すでに存在します: ${postDir}`);
@@ -51,4 +54,4 @@ tags: []
 await mkdir(postDir, { recursive: true });
 await writeFile(join(postDir, "index.md"), template);
 
-console.log(`作成しました: src/content/blog/${slug}/index.md`);
+console.log(`作成しました: src/content/posts/${slug}/index.md`);

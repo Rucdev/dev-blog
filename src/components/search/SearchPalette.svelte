@@ -1,7 +1,14 @@
 <script lang="ts">
 import { onMount } from "svelte";
+import { loadPagefind, searchBody } from "./fulltext";
 import ResultItem from "./ResultItem.svelte";
-import { countTags, filterPosts, postHref, type SearchPost } from "./search";
+import {
+  countTags,
+  filterPosts,
+  type HighlightChunk,
+  postHref,
+  type SearchPost,
+} from "./search";
 import TagChips from "./TagChips.svelte";
 
 let { posts }: { posts: SearchPost[] } = $props();
@@ -14,8 +21,12 @@ let input: HTMLInputElement;
 let query = $state("");
 let activeTag = $state<string | null>(null);
 
+// 本文検索のヒット(slug → 本文の抜粋)。Pagefind の結果が返るたびに差し替える
+let bodyHits = $state<Map<string, HighlightChunk[]>>(new Map());
+let searchSeq = 0;
+
 const tags = $derived(countTags(posts));
-const results = $derived(filterPosts(posts, query, activeTag));
+const results = $derived(filterPosts(posts, query, activeTag, bodyHits));
 
 // 結果が変わるたびに先頭へ戻る。キー操作やホバーでの代入は次に結果が変わるまで有効(writable $derived)
 let selectedIndex = $derived(results.length > 0 ? 0 : -1);
@@ -27,6 +38,20 @@ onMount(() => {
   const tag = params.get("tag");
   activeTag = tag !== null && tags.some(([t]) => t === tag) ? tag : null;
   input.focus();
+  loadPagefind();
+});
+
+$effect(() => {
+  const q = query.trim();
+  const seq = ++searchSeq;
+  if (!q) {
+    bodyHits = new Map();
+    return;
+  }
+  searchBody(q).then((hits) => {
+    // 入力が進んで古くなった結果は捨てる
+    if (hits && seq === searchSeq) bodyHits = hits;
+  });
 });
 
 // 検索条件を URL に書き戻す。履歴は増やさない
@@ -98,7 +123,7 @@ function onWindowKeydown(event: KeyboardEvent) {
       bind:value={query}
       onkeydown={onInputKeydown}
       type="text"
-      placeholder="タイトル・抜粋・タグで検索"
+      placeholder="タイトル・タグ・本文で検索"
       autocomplete="off"
       role="combobox"
       aria-label="記事を検索"
@@ -119,6 +144,7 @@ function onWindowKeydown(event: KeyboardEvent) {
         id={optionId(i)}
         {post}
         {query}
+        bodyExcerpt={bodyHits.get(post.slug)}
         selected={i === selectedIndex}
         onhover={() => (selectedIndex = i)}
       />

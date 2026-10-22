@@ -1,0 +1,55 @@
+---
+import { tagHref } from "../utils/tags";
+
+interface Props {
+  tags: [string, number][];
+  /** 選択中のタグ。未指定なら「すべて」を選択状態にする */
+  active?: string;
+  /** 「すべて」チップのリンク先と件数 */
+  all?: { href: string; count: number };
+}
+
+const { tags, active, all } = Astro.props;
+---
+
+<nav class="chips" aria-label="タグで絞り込み">
+  {all && (
+    <a href={all.href} aria-current={active === undefined ? "page" : undefined}>
+      すべて <span class="count">{all.count}</span>
+    </a>
+  )}
+  {tags.map(([tag, count]) => (
+    <a href={tagHref(tag)} aria-current={active === tag ? "page" : undefined}>
+      #{tag} <span class="count">{count}</span>
+    </a>
+  ))}
+</nav>
+
+<style>
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+a {
+  padding: 3px 9px;
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  border-radius: 3px;
+  font: 400 11px var(--font-mono);
+  color: var(--muted);
+}
+a:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  text-decoration: none;
+}
+a[aria-current="page"] {
+  background: var(--header-bg);
+  border-color: var(--header-bg);
+  color: var(--header-fg);
+}
+.count {
+  color: var(--faint);
+}
+</style>

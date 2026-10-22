@@ -1,0 +1,119 @@
+---
+import type { CollectionEntry } from "astro:content";
+import { estimateReadingTime } from "../utils/readingTime";
+import FormattedDate from "./FormattedDate.astro";
+
+interface Props {
+  posts: CollectionEntry<"posts">[];
+}
+
+const { posts } = Astro.props;
+---
+
+<div class="table-head">
+  <span>DATE</span><span>TITLE</span><span>TAG</span
+  ><span class="align-right">MIN</span>
+</div>
+<div class="rows">
+  {posts.map((post) => (
+    <a class="row" href={`/posts/${post.id}/`}>
+      <span class="date">
+        <FormattedDate date={post.data.pubDate} />
+      </span>
+      <span class="title">
+        {post.data.title}
+        {post.data.description && (
+          <span class="desc">{post.data.description}</span>
+        )}
+      </span>
+      <span class="tag">
+        {post.data.tags.map((tag) => (
+          <span>#{tag}</span>
+        ))}
+      </span>
+      <span class="min">{estimateReadingTime(post.body ?? "")}</span>
+    </a>
+  ))}
+</div>
+{posts.length === 0 && <p class="empty">まだ記事がありません。</p>}
+
+<style>
+.table-head {
+  display: grid;
+  grid-template-columns: 96px 1fr 160px 56px;
+  gap: 14px;
+  padding: 0 6px 9px;
+  font: 500 10.5px var(--font-mono);
+  color: var(--faint);
+  letter-spacing: 0.08em;
+  border-bottom: 1px solid var(--border-strong);
+}
+.align-right {
+  text-align: right;
+}
+.rows {
+  display: flex;
+  flex-direction: column;
+}
+.row {
+  display: grid;
+  grid-template-columns: 96px 1fr 160px 56px;
+  gap: 14px;
+  padding: 10px 6px;
+  border-bottom: 1px solid var(--border-soft);
+  color: var(--ink);
+  text-decoration: none;
+}
+.row:hover {
+  background: var(--surface-strong);
+  text-decoration: none;
+}
+.date {
+  font: 400 12px var(--font-mono);
+  color: var(--faint);
+}
+.title {
+  font: 400 13.5px var(--font-sans);
+  color: var(--ink);
+}
+.row:hover .title {
+  color: var(--accent);
+}
+.desc {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin-top: 2px;
+  font-size: 12px;
+  color: var(--muted);
+}
+.tag {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 8px;
+  align-content: start;
+  font: 400 11.5px var(--font-mono);
+  color: var(--accent);
+}
+.min {
+  text-align: right;
+  font: 400 11.5px var(--font-mono);
+  color: var(--faint);
+}
+.empty {
+  margin: 24px 6px;
+  font: 400 13px var(--font-sans);
+  color: var(--muted);
+}
+@media (max-width: 640px) {
+  .table-head span:nth-child(3),
+  .row .tag {
+    display: none;
+  }
+  .table-head,
+  .row {
+    grid-template-columns: 74px 1fr 44px;
+  }
+}
+</style>

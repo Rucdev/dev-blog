@@ -1,38 +1,25 @@
 ---
 import { getCollection } from "astro:content";
-import FormattedDate from "../components/FormattedDate.astro";
+import PostList from "../components/PostList.astro";
+import TagList from "../components/TagList.astro";
 import { SITE_DESCRIPTION, SITE_TITLE } from "../consts";
 import Layout from "../layouts/Layout.astro";
-import { estimateReadingTime } from "../utils/readingTime";
+import { countTags } from "../utils/tags";
 
 const posts = (await getCollection("posts")).sort(
   (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
 );
 const recentPosts = posts.slice(0, 10);
+const tags = countTags(posts);
 ---
 
 <Layout title={SITE_TITLE} description={SITE_DESCRIPTION}>
   <section class="listing">
     <p class="prompt">$ ls -lt ~/posts</p>
-    <div class="table-head">
-      <span>DATE</span><span>TITLE</span><span>TAG</span
-      ><span class="align-right">MIN</span>
+    <div class="tags">
+      <TagList tags={tags} all={{ href: "/", count: posts.length }} />
     </div>
-    <div class="rows">
-      {recentPosts.map((post) => (
-        <a class="row" href={`/posts/${post.id}/`}>
-          <span class="date">
-            <FormattedDate date={post.data.pubDate} />
-          </span>
-          <span class="title">{post.data.title}</span>
-          <span class="tag">
-            {post.data.tags[0] ? `#${post.data.tags[0]}` : ""}
-          </span>
-          <span class="min">{estimateReadingTime(post.body ?? "")}</span>
-        </a>
-      ))}
-    </div>
-    {posts.length === 0 && <p class="empty">まだ記事がありません。</p>}
+    <PostList posts={recentPosts} />
     <p class="more">
       showing {recentPosts.length} of {posts.length} —
       <a href="/archive">more</a>
@@ -47,79 +34,17 @@ const recentPosts = posts.slice(0, 10);
   padding: 34px 28px 56px;
 }
 .prompt {
-  margin: 0 0 20px;
+  margin: 0 0 14px;
   font: 400 12px var(--font-mono);
   color: var(--accent);
   letter-spacing: 0.04em;
 }
-.table-head {
-  display: grid;
-  grid-template-columns: 96px 1fr 128px 56px;
-  gap: 14px;
-  padding: 0 6px 9px;
-  font: 500 10.5px var(--font-mono);
-  color: var(--faint);
-  letter-spacing: 0.08em;
-  border-bottom: 1px solid var(--border-strong);
-}
-.align-right {
-  text-align: right;
-}
-.rows {
-  display: flex;
-  flex-direction: column;
-}
-.row {
-  display: grid;
-  grid-template-columns: 96px 1fr 128px 56px;
-  gap: 14px;
-  padding: 9px 6px;
-  border-bottom: 1px solid var(--border-soft);
-  color: var(--ink);
-  text-decoration: none;
-}
-.row:hover {
-  background: var(--surface-strong);
-  text-decoration: none;
-}
-.row:hover .title {
-  color: var(--accent);
-}
-.date {
-  font: 400 12px var(--font-mono);
-  color: var(--faint);
-}
-.title {
-  font: 400 13.5px var(--font-sans);
-  color: var(--ink);
-}
-.tag {
-  font: 400 11.5px var(--font-mono);
-  color: var(--accent);
-}
-.min {
-  text-align: right;
-  font: 400 11.5px var(--font-mono);
-  color: var(--faint);
-}
-.empty {
-  margin: 24px 6px;
-  font: 400 13px var(--font-sans);
-  color: var(--muted);
+.tags {
+  margin-bottom: 22px;
 }
 .more {
   margin: 18px 6px 0;
   font: 400 11.5px var(--font-mono);
   color: var(--faint);
-}
-@media (max-width: 640px) {
-  .table-head span:nth-child(3),
-  .row .tag {
-    display: none;
-  }
-  .table-head,
-  .row {
-    grid-template-columns: 74px 1fr 44px;
-  }
 }
 </style>

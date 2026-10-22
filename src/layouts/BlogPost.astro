@@ -3,13 +3,17 @@ import type { CollectionEntry } from "astro:content";
 import type { MarkdownHeading } from "astro";
 import FormattedDate from "../components/FormattedDate.astro";
 import { estimateReadingTime } from "../utils/readingTime";
+import { tagHref } from "../utils/tags";
 import Layout from "./Layout.astro";
 
 type Props = CollectionEntry<"posts">["data"] & {
+  /** 記事ページのときだけ渡す。OG 画像や構造化データに使う */
+  slug?: string;
   body?: string;
   headings: MarkdownHeading[];
   prevPost: CollectionEntry<"posts"> | null;
   nextPost: CollectionEntry<"posts"> | null;
+  related?: CollectionEntry<"posts">[];
 };
 
 const {
@@ -22,27 +26,38 @@ const {
   headings,
   prevPost,
   nextPost,
+  slug,
+  related = [],
 } = Astro.props;
 
-const toc = headings.filter((h) => h.depth === 2);
+// 記事ごとに見出しの使い方がまちまちなので、最上位レベルとその 1 つ下までを目次にする
+const minDepth = Math.min(...headings.map((h) => h.depth));
+const toc = headings.filter((h) => h.depth <= minDepth + 1);
 const readingMinutes = estimateReadingTime(body ?? "");
 ---
 
-<Layout title={title} description={description}>
+<Layout
+  title={title}
+  description={description}
+  image={slug && `/og/${slug}.png`}
+  article={slug
+    ? { publishedTime: pubDate, modifiedTime: updatedDate, tags }
+    : undefined}
+>
   <div class="article-grid">
     <article class="prose-wrap">
       <div class="meta">
         <FormattedDate date={pubDate} />
-        {tags.map((tag) => <span>#{tag}</span>)}
+        {tags.map((tag) => <a href={tagHref(tag)}>#{tag}</a>)}
         <span>{readingMinutes} min read</span>
       </div>
-      <h1 class="title">{title}</h1>
+      <h1 class="title" data-pagefind-meta="title">{title}</h1>
       {updatedDate && (
         <p class="updated">
           Last updated on <FormattedDate date={updatedDate} />
         </p>
       )}
-      <div class="prose">
+      <div class="prose" data-pagefind-body>
         <slot />
       </div>
       {(prevPost || nextPost) && (
@@ -59,15 +74,40 @@ const readingMinutes = estimateReadingTime(body ?? "");
           </span>
         </nav>
       )}
+      {related.length > 0 && (
+        <section class="related" aria-labelledby="related-label">
+          <p class="related-label" id="related-label">
+            RELATED
+          </p>
+          {related.map((post) => (
+            <a class="related-post" href={`/posts/${post.id}/`}>
+              <span class="related-title">{post.data.title}</span>
+              <span class="related-meta">
+                <FormattedDate date={post.data.pubDate} />
+                {post.data.tags.map((tag) => (
+                  <span>#{tag}</span>
+                ))}
+              </span>
+            </a>
+          ))}
+        </section>
+      )}
     </article>
     {toc.length > 0 && (
       <aside class="toc">
-        <p class="toc-label">CONTENTS</p>
-        <div class="toc-list">
-          {toc.map((heading) => (
-            <a href={`#${heading.slug}`}>{heading.text}</a>
-          ))}
-        </div>
+        <details id="toc" open>
+          <summary class="toc-label">CONTENTS</summary>
+          <nav class="toc-list" aria-label="目次">
+            {toc.map((heading) => (
+              <a
+                href={`#${heading.slug}`}
+                class:list={{ sub: heading.depth > minDepth }}
+              >
+                {heading.text}
+              </a>
+            ))}
+          </nav>
+        </details>
       </aside>
     )}
   </div>
@@ -84,6 +124,9 @@ const readingMinutes = estimateReadingTime(body ?? "");
 }
 .prose-wrap {
   max-width: 720px;
+}
+.meta a {
+  color: var(--accent);
 }
 .meta {
   display: flex;
@@ -117,30 +160,83 @@ const readingMinutes = estimateReadingTime(body ?? "");
   margin-left: auto;
   text-align: right;
 }
+.related {
+  margin-top: 36px;
+}
+.related-label {
+  margin: 0 0 6px;
+  font: 500 10.5px var(--font-mono);
+  color: var(--faint);
+  letter-spacing: 0.12em;
+}
+.related-post {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border-soft);
+  text-decoration: none;
+}
+.related-post:hover {
+  text-decoration: none;
+}
+.related-title {
+  font: 500 14px / 1.6 var(--font-sans);
+  color: var(--ink);
+}
+.related-post:hover .related-title {
+  color: var(--accent);
+}
+.related-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  font: 400 11px var(--font-mono);
+  color: var(--faint);
+}
 .toc {
   align-self: start;
   position: sticky;
   top: 20px;
+  max-height: calc(100vh - 40px);
+  overflow-y: auto;
 }
 .toc-label {
   margin: 0 0 10px;
   font: 500 10.5px var(--font-mono);
   color: var(--faint);
   letter-spacing: 0.12em;
+  list-style: none;
+  cursor: default;
+}
+.toc-label::-webkit-details-marker {
+  display: none;
 }
 .toc-list {
   display: flex;
   flex-direction: column;
-  gap: 8px;
   font: 400 12px / 1.6 var(--font-sans);
   border-left: 1px solid var(--border);
-  padding-left: 12px;
 }
 .toc-list a {
+  padding: 4px 0 4px 12px;
+  margin-left: -1px;
+  border-left: 2px solid transparent;
   color: var(--muted);
+}
+.toc-list a.sub {
+  padding-left: 24px;
+  font-size: 11.5px;
+  color: var(--faint);
 }
 .toc-list a:hover {
   color: var(--accent);
+  text-decoration: none;
+}
+.toc-list a[aria-current="true"] {
+  border-left-color: var(--accent);
+  color: var(--ink);
+  font-weight: 500;
 }
 @media (max-width: 860px) {
   .article-grid {
@@ -149,6 +245,121 @@ const readingMinutes = estimateReadingTime(body ?? "");
   .toc {
     position: static;
     order: -1;
+    max-height: none;
+    padding: 12px 14px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+  }
+  .toc-label {
+    margin: 0;
+    cursor: pointer;
+  }
+  .toc-label::before {
+    content: "▸ ";
+  }
+  details[open] .toc-label {
+    margin-bottom: 10px;
+  }
+  details[open] .toc-label::before {
+    content: "▾ ";
+  }
+}
+.prose :global(:is(h2, h3, h4)) {
+  scroll-margin-top: 20px;
+}
+.prose :global(.heading-anchor) {
+  margin-left: 8px;
+  font: 400 0.85em var(--font-mono);
+  color: var(--faint);
+  text-decoration: none;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+.prose :global(:is(h2, h3, h4):hover .heading-anchor),
+.prose :global(.heading-anchor:focus-visible) {
+  opacity: 1;
+}
+.prose :global(.heading-anchor:hover) {
+  color: var(--accent);
+}
+.prose :global(.heading-anchor[data-copied]::after) {
+  content: " copied";
+  font-size: 0.75em;
+}
+@media (hover: none) {
+  .prose :global(.heading-anchor) {
+    opacity: 0.6;
   }
 }
 </style>
+
+<script>
+// 見出し横の # を押したら、その見出しへの URL をクリップボードにコピーする
+document
+  .querySelectorAll<HTMLAnchorElement>(".heading-anchor")
+  .forEach((link) => {
+    link.addEventListener("click", () => {
+      navigator.clipboard?.writeText(link.href).then(() => {
+        link.dataset.copied = "";
+        setTimeout(() => delete link.dataset.copied, 1500);
+      });
+    });
+  });
+
+const details = document.querySelector<HTMLDetailsElement>("#toc");
+if (details) {
+  // 横並びのときは常に開いたまま、1 カラムのときは折りたたんで始める
+  const wide = matchMedia("(min-width: 861px)");
+  details.open = wide.matches;
+  details.querySelector("summary")?.addEventListener("click", (event) => {
+    if (wide.matches) event.preventDefault();
+  });
+
+  // 読んでいる位置の見出しを目次でハイライトする
+  const links = [...details.querySelectorAll<HTMLAnchorElement>("a")];
+  const targets = links
+    .map((link) =>
+      document.getElementById(decodeURIComponent(link.hash.slice(1))),
+    )
+    .filter((el): el is HTMLElement => el !== null);
+
+  // 目次が長くてはみ出すときは、ハイライト中の項目が見える位置まで目次だけをスクロールする
+  const aside = details.closest("aside");
+  const keepVisible = (link: HTMLElement) => {
+    if (!aside || !wide.matches) return;
+    const top = link.offsetTop - aside.offsetTop;
+    if (top < aside.scrollTop) aside.scrollTop = top;
+    else if (top + link.offsetHeight > aside.scrollTop + aside.clientHeight)
+      aside.scrollTop = top + link.offsetHeight - aside.clientHeight;
+  };
+
+  let ticking = false;
+  const update = () => {
+    ticking = false;
+    let current = -1;
+    targets.forEach((el, i) => {
+      if (el.getBoundingClientRect().top < 80) current = i;
+    });
+    links.forEach((link, i) => {
+      if (i === current) {
+        link.setAttribute("aria-current", "true");
+        keepVisible(link);
+      } else {
+        link.removeAttribute("aria-current");
+      }
+    });
+  };
+  addEventListener(
+    "scroll",
+    () => {
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(update);
+      }
+    },
+    { passive: true },
+  );
+  update();
+}
+</script>

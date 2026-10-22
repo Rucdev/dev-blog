@@ -1,0 +1,72 @@
+---
+import { type CollectionEntry, getCollection } from "astro:content";
+import PostList from "../../components/PostList.astro";
+import TagList from "../../components/TagList.astro";
+import { SITE_TITLE } from "../../consts";
+import Layout from "../../layouts/Layout.astro";
+import { countTags, hasTag, tagSlug } from "../../utils/tags";
+
+export async function getStaticPaths() {
+  const posts = (await getCollection("posts")).sort(
+    (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+  );
+  const tags = countTags(posts);
+  return tags.map(([tag]) => ({
+    params: { tag: tagSlug(tag) },
+    props: {
+      tag,
+      tags,
+      total: posts.length,
+      posts: posts.filter((post) => hasTag(post, tag)),
+    },
+  }));
+}
+
+interface Props {
+  tag: string;
+  tags: [string, number][];
+  total: number;
+  posts: CollectionEntry<"posts">[];
+}
+
+const { tag, tags, total, posts } = Astro.props;
+---
+
+<Layout
+  title={`#${tag} | ${SITE_TITLE}`}
+  description={`#${tag} の記事一覧(${posts.length} 本)`}
+>
+  <section class="listing">
+    <p class="prompt">$ grep -l "#{tag}" ~/posts/*</p>
+    <h1>#{tag} <span class="count">{posts.length} posts</span></h1>
+    <div class="tags">
+      <TagList tags={tags} active={tag} all={{ href: "/", count: total }} />
+    </div>
+    <PostList posts={posts} />
+  </section>
+</Layout>
+
+<style>
+.listing {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 34px 28px 56px;
+}
+.prompt {
+  margin: 0 0 14px;
+  font: 400 12px var(--font-mono);
+  color: var(--accent);
+  letter-spacing: 0.04em;
+}
+h1 {
+  font: 700 22px var(--font-sans);
+  margin: 0 0 16px;
+}
+.count {
+  font: 400 12px var(--font-mono);
+  color: var(--faint);
+}
+.tags {
+  margin-bottom: 22px;
+}
+</style>

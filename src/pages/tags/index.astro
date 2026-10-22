@@ -1,0 +1,39 @@
+---
+import { getCollection } from "astro:content";
+import TagList from "../../components/TagList.astro";
+import { SITE_TITLE } from "../../consts";
+import Layout from "../../layouts/Layout.astro";
+import { countTags } from "../../utils/tags";
+
+const posts = await getCollection("posts");
+const tags = countTags(posts);
+---
+
+<Layout
+  title={`タグ一覧 | ${SITE_TITLE}`}
+  description={`${tags.length} 個のタグから記事を探す`}
+>
+  <section class="tags-page">
+    <p class="prompt">$ ls ~/tags</p>
+    <h1>タグ一覧</h1>
+    <TagList tags={tags} />
+  </section>
+</Layout>
+
+<style>
+.tags-page {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 34px 28px 56px;
+}
+.prompt {
+  margin: 0 0 14px;
+  font: 400 12px var(--font-mono);
+  color: var(--accent);
+  letter-spacing: 0.04em;
+}
+h1 {
+  font: 700 22px var(--font-sans);
+  margin: 0 0 20px;
+}
+</style>

@@ -1,5 +1,6 @@
 ---
 import AboutHeroImage from "../assets/blog-placeholder-about.jpg";
+import Breakout from "../components/lab/Breakout.svelte";
 import Layout from "../layouts/BlogPost.astro";
 ---
 
@@ -19,4 +20,6 @@ import Layout from "../layouts/BlogPost.astro";
     ICTネットワーク関連をメインのフィールドしながら、システム開発、Web開発もつまみ食いしているなんちゃってフルスタックエンジニア。
   </p>
   <p>好きなプロトコルはSSH</p>
+
+  <Breakout client:visible />
 </Layout>

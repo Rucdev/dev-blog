@@ -55,5 +55,5 @@ export function splitHighlight(text: string, query: string): HighlightChunk[] {
 }
 
 export function postHref(post: SearchPost): string {
-  return `/blog/${post.slug}/`;
+  return `/posts/${post.slug}/`;
 }

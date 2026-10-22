@@ -52,7 +52,7 @@ Worker へ紐付けられる(DNS レコードも Cloudflare が自動で作る)�
 
 ## 記事を公開するとき
 
-記事は `src/content/blog/<slug>/index.md` に置く(画像は同じディレクトリ内)。
+記事は `src/content/posts/<slug>/index.md` に置く(画像は同じディレクトリ内)。
 `main` に push すれば自動でビルド・公開される。
 
 記事は元々 `Rucdev/tech-blog` リポジトリで管理していたが、`git subtree` で履歴ごと取り込んだ。

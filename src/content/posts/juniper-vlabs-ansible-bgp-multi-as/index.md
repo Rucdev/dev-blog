@@ -6,8 +6,6 @@ tags: []
 heroImage: ./images/20221220002400.png
 ---
 
-この記事は [【アットホームな現場です】🎄★☆ネットワーク系エンジニア★☆アレコレアウトプット★☆🎄のカレンダー | Advent Calendar 2022 - Qiita](https://qiita.com/advent-calendar/2022/nw-engineering-are-core-output) の20日目の記事になります。
-
 今回はJuniper vLabsのBGP - Multi - ASの構成でAnsibleを使った設定投入にチャレンジしていきます。
 
 ## Juniper vLabsを立ち上げる

@@ -5,8 +5,6 @@ pubDate: 2023-12-11T08:30:00+09:00
 tags: ["Ansible"]
 ---
 
-この記事は [エーピーコミュニケーションズ Advent Calendar](https://qiita.com/advent-calendar/2023/ap-com) 2023 の11日目の投稿です。
-
 ## Network Resoruce Moduleとは
 
 公式はこちら ⇒　 [Network Resource Modules — Ansible Community Documentation](https://docs.ansible.com/ansible/latest/network/user_guide/network_resource_modules.html)

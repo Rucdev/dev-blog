@@ -5,8 +5,6 @@ pubDate: 2022-12-06T09:00:00+09:00
 tags: ["Ansible"]
 ---
 
-本記事は「[エーピーコミュニケーションズ Advent Calendar 2022](https://qiita.com/advent-calendar/2022/ap-com)」の6日目のエントリとなります。
-
 こんにちは！
 
 今回はAnsibleのモジュール作成に挑戦していきます。  

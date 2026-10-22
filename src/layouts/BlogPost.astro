@@ -5,11 +5,11 @@ import FormattedDate from "../components/FormattedDate.astro";
 import { estimateReadingTime } from "../utils/readingTime";
 import Layout from "./Layout.astro";
 
-type Props = CollectionEntry<"blog">["data"] & {
+type Props = CollectionEntry<"posts">["data"] & {
   body?: string;
   headings: MarkdownHeading[];
-  prevPost: CollectionEntry<"blog"> | null;
-  nextPost: CollectionEntry<"blog"> | null;
+  prevPost: CollectionEntry<"posts"> | null;
+  nextPost: CollectionEntry<"posts"> | null;
 };
 
 const {
@@ -49,12 +49,12 @@ const readingMinutes = estimateReadingTime(body ?? "");
         <nav class="post-nav">
           <span>
             {prevPost && (
-              <a href={`/blog/${prevPost.id}/`}>← {prevPost.data.title}</a>
+              <a href={`/posts/${prevPost.id}/`}>← {prevPost.data.title}</a>
             )}
           </span>
           <span class="next">
             {nextPost && (
-              <a href={`/blog/${nextPost.id}/`}>{nextPost.data.title} →</a>
+              <a href={`/posts/${nextPost.id}/`}>{nextPost.data.title} →</a>
             )}
           </span>
         </nav>

@@ -42,7 +42,7 @@ Astro の Content Collections はビルド時にリポジトリ内のファイ�
 
 | フェーズ | 置き場所 | 仕組み |
 |---|---|---|
-| 1 | リポジトリ内 `src/content/blog/` | Content Collections + SSG。git push で再デプロイ=公開 |
+| 1 | リポジトリ内 `src/content/posts/` | Content Collections + SSG。git push で再デプロイ=公開 |
 | 2 | R2 | Content Layer API のカスタムローダーでビルド時に R2 から取得 |
 | 3(任意) | R2 + SSR | 記事ページだけオンデマンド描画。再ビルド不要で即時公開 |
 
@@ -95,7 +95,7 @@ iframe 埋め込み(`credentialless` 属性など)はブラウザ対応が揃い
 dev-blog/
 ├── src/
 │   ├── content/
-│   │   └── blog/           # フェーズ1のMarkdown置き場
+│   │   └── posts/          # フェーズ1のMarkdown置き場
 │   ├── content.config.ts   # コレクションのスキーマ定義(zod)
 │   ├── layouts/            # BaseLayout, BlogPostLayout
 │   ├── components/
@@ -103,7 +103,7 @@ dev-blog/
 │   │   └── svelte/         # インタラクティブなもの
 │   ├── pages/
 │   │   ├── index.astro
-│   │   ├── blog/[...slug].astro
+│   │   ├── posts/[...slug].astro
 │   │   ├── games/index.astro      # ゲーム一覧
 │   │   └── games/[id].astro       # 各ゲームの紹介・起動ページ
 │   └── data/games.ts       # ゲームのメタ情報(R2上のURL等)

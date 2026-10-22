@@ -3,7 +3,7 @@ import { getCollection } from "astro:content";
 import { SITE_TITLE } from "../consts";
 import Layout from "../layouts/Layout.astro";
 
-const posts = (await getCollection("blog")).sort(
+const posts = (await getCollection("posts")).sort(
   (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
 );
 
@@ -87,7 +87,7 @@ const byYearMonth = years.map((year) => {
               {year} / {String(month + 1).padStart(2, "0")}
             </p>
             {monthPosts.map((post) => (
-              <a class="month-post" href={`/blog/${post.id}/`}>
+              <a class="month-post" href={`/posts/${post.id}/`}>
                 <span class="day">
                   {String(post.data.pubDate.getDate()).padStart(2, "0")}
                 </span>

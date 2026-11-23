@@ -15,15 +15,18 @@ const tags = countTags(posts);
 
 <Layout title={SITE_TITLE} description={SITE_DESCRIPTION}>
   <section class="listing">
-    <p class="prompt">$ ls -lt ~/posts</p>
-    <div class="tags">
-      <TagList tags={tags} all={{ href: "/", count: posts.length }} />
+    <div class="main">
+      <p class="prompt">$ ls -lt ~/posts</p>
+      <PostList posts={recentPosts} />
+      <p class="more">
+        showing {recentPosts.length} of {posts.length} —
+        <a href="/archive">more</a>
+      </p>
     </div>
-    <PostList posts={recentPosts} />
-    <p class="more">
-      showing {recentPosts.length} of {posts.length} —
-      <a href="/archive">more</a>
-    </p>
+    <aside class="rail">
+      <p class="prompt">$ ls ~/tags</p>
+      <TagList tags={tags} all={{ href: "/", count: posts.length }} vertical />
+    </aside>
   </section>
 </Layout>
 
@@ -31,7 +34,17 @@ const tags = countTags(posts);
 .listing {
   max-width: 1120px;
   margin: 0 auto;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 232px;
+  gap: 44px;
   padding: 34px 28px 56px;
+}
+.rail {
+  align-self: start;
+  position: sticky;
+  top: 20px;
+  max-height: calc(100vh - 40px);
+  overflow-y: auto;
 }
 .prompt {
   margin: 0 0 14px;
@@ -39,12 +52,19 @@ const tags = countTags(posts);
   color: var(--accent);
   letter-spacing: 0.04em;
 }
-.tags {
-  margin-bottom: 22px;
-}
 .more {
   margin: 18px 6px 0;
   font: 400 11.5px var(--font-mono);
   color: var(--faint);
+}
+@media (max-width: 860px) {
+  .listing {
+    grid-template-columns: 1fr;
+    gap: 36px;
+  }
+  .rail {
+    position: static;
+    max-height: none;
+  }
 }
 </style>

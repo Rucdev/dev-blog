@@ -7,12 +7,14 @@ interface Props {
   active?: string;
   /** 「すべて」チップのリンク先と件数 */
   all?: { href: string; count: number };
+  /** サイドレール用。チップではなく「名前 + 件数」の縦 1 列で並べる */
+  vertical?: boolean;
 }
 
-const { tags, active, all } = Astro.props;
+const { tags, active, all, vertical = false } = Astro.props;
 ---
 
-<nav class="chips" aria-label="タグで絞り込み">
+<nav class:list={["chips", { vertical }]} aria-label="タグで絞り込み">
   {all && (
     <a href={all.href} aria-current={active === undefined ? "page" : undefined}>
       すべて <span class="count">{all.count}</span>
@@ -51,5 +53,30 @@ a[aria-current="page"] {
 }
 .count {
   color: var(--faint);
+}
+/* 縦 1 列はレールが横に並ぶ幅だけ。狭い画面ではチップに戻す(index.astro の境界と合わせる) */
+@media (min-width: 861px) {
+  .vertical {
+    flex-direction: column;
+    flex-wrap: nowrap;
+    gap: 0;
+  }
+  .vertical a {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 4px 6px;
+    background: none;
+    border: none;
+    border-radius: 3px;
+    font-size: 12px;
+  }
+  .vertical a:hover {
+    background: var(--surface-strong);
+  }
+  .vertical a[aria-current="page"] {
+    background: none;
+    color: var(--accent);
+  }
 }
 </style>

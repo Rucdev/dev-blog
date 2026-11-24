@@ -8,8 +8,8 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
-    "preview": "astro build && wrangler dev",
-    "deploy": "astro build && wrangler deploy",
+    "preview": "astro build && astro preview",
+    "deploy": "astro build && cf deploy ./dist",
     "astro": "astro",
     "new": "bun scripts/new-post.ts"
   },
@@ -32,8 +32,8 @@
   "devDependencies": {
     "@astrojs/check": "^0.9.12",
     "@biomejs/biome": "2.5.15",
+    "cf": "^1.0.0-rc.4",
     "pagefind": "^1.6.0",
-    "typescript": "^5.9.3",
-    "wrangler": "^4.160.0"
+    "typescript": "^5.9.3"
   }
 }
